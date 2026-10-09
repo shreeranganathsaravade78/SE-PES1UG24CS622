@@ -1,10 +1,16 @@
 import random
 from words import WORDS, HINTS
 from stats import SessionStats
+DIFFICULTIES = {
+    "easy": {"lives": 8, "win_points": 3, "hint_penalty": 1},
+    "medium": {"lives": 6, "win_points": 5, "hint_penalty": 1},
+    "hard": {"lives": 4, "win_points": 8, "hint_penalty": 2},
+}
 
 class HangmanGame:
     def __init__(self):
         self.stats = SessionStats()
+        self.difficulty = "medium"
         self.score = 0
         self.streak = 0
         self.category = "technology"
@@ -18,7 +24,7 @@ class HangmanGame:
         self.secret = random.choice(WORDS[self.category])
         self.guessed.clear()
         self.wrong.clear()
-        self.lives = 6
+        self.lives = DIFFICULTIES[self.difficulty]["lives"]
         self.hint_used = False
 
     def masked(self):
@@ -45,7 +51,8 @@ class HangmanGame:
         if self.hint_used:
             return None
         self.hint_used = True
-        self.score = max(0, self.score - 1)
+        penalty = DIFFICULTIES[self.difficulty]["hint_penalty"]
+        self.score = max(0, self.score - penalty)
         return HINTS.get(self.secret, "No hint available.")
 
     def play_round(self):
@@ -65,7 +72,8 @@ class HangmanGame:
 
         if self.won():
             self.streak += 1
-            self.score += 5 + self.streak
+            win_points = DIFFICULTIES[self.difficulty]["win_points"]
+            self.score += win_points + self.streak
             self.stats.record(True, self.streak)
             print("Solved:", self.secret)
             return True
@@ -74,6 +82,7 @@ class HangmanGame:
         self.stats.record(False, self.streak)
         print("Out of lives. The word was:", self.secret)
         return True
+
 
     def print_session_stats(self):
         print("\n--- Session Statistics ---")
@@ -95,10 +104,24 @@ class HangmanGame:
             if raw not in WORDS:
                 print("Unknown category.")
                 continue
+            
+            print("\nDifficulties:", ", ".join(DIFFICULTIES))
+            
+            while True:
+                difficulty = input("Choose difficulty: ").strip().lower()
+            
+                if difficulty in DIFFICULTIES:
+                    self.difficulty = difficulty
+                    break
+            
+                print("Invalid difficulty. Choose easy, medium, or hard.")
+            
             self.category = raw
+            
             if not self.play_round():
                 self.print_session_stats()
                 return
+
             again = input("Another round? [y/n]: ").strip().lower()
             if again != "y":
                 print("Final score:", self.score, " Streak:", self.streak)
