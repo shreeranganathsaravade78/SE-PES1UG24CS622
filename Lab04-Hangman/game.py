@@ -26,10 +26,11 @@ class HangmanGame:
     def won(self):
         return all(ch in self.guessed for ch in set(self.secret))
 
+    
     def guess(self, letter):
         if len(letter) != 1 or not letter.isalpha():
             return "Enter one letter."
-        if letter in self.guessed:
+        if letter in self.guessed or letter in self.wrong:
             return "Already guessed."
         if letter in self.secret:
             self.guessed.add(letter)
@@ -37,6 +38,7 @@ class HangmanGame:
         self.wrong.add(letter)
         self.lives -= 1
         return "Wrong."
+
 
     def use_hint(self):
         if self.hint_used:
