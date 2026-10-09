@@ -1,11 +1,13 @@
 import random
 from words import WORDS, HINTS
 from stats import SessionStats
+
 DIFFICULTIES = {
     "easy": {"lives": 8, "win_points": 3, "hint_penalty": 1},
     "medium": {"lives": 6, "win_points": 5, "hint_penalty": 1},
     "hard": {"lives": 4, "win_points": 8, "hint_penalty": 2},
 }
+
 
 class HangmanGame:
     def __init__(self):
@@ -33,7 +35,6 @@ class HangmanGame:
     def won(self):
         return all(ch in self.guessed for ch in set(self.secret))
 
-    
     def guess(self, letter):
         if len(letter) != 1 or not letter.isalpha():
             return "Enter one letter."
@@ -45,7 +46,6 @@ class HangmanGame:
         self.wrong.add(letter)
         self.lives -= 1
         return "Wrong."
-
 
     def use_hint(self):
         if self.hint_used:
@@ -62,12 +62,17 @@ class HangmanGame:
             print("Wrong:", " ".join(sorted(self.wrong)) or "-")
             print("Lives:", self.lives, "Score:", self.score, "Streak:", self.streak)
             raw = input("Letter, /hint, or /quit: ").strip().lower()
+
             if raw == "/quit":
                 return False
             if raw == "/hint":
                 hint = self.use_hint()
-                print(hint if hint else "Hint already used.")
+                print("Hint already used." if hint is None else hint)
                 continue
+            if raw.startswith("/"):
+                print("Unknown command.")
+                continue
+
             print(self.guess(raw))
 
         if self.won():
@@ -83,41 +88,43 @@ class HangmanGame:
         print("Out of lives. The word was:", self.secret)
         return True
 
-
     def print_session_stats(self):
         print("\n--- Session Statistics ---")
         print("Rounds played:", self.stats.rounds)
         print("Rounds won:", self.stats.wins)
         print("Best streak:", self.stats.best_streak)
 
-    
-   
     def run(self):
         print("Hangman Challenge")
         print("A session consists of multiple rounds.")
+
         while True:
             print("\nCategories:", ", ".join(WORDS))
-            raw = input("Choose category or q: ").strip().lower()
+            raw = input("Choose category or q to quit: ").strip().lower()
+
             if raw == "q":
                 self.print_session_stats()
                 return
             if raw not in WORDS:
                 print("Unknown category.")
                 continue
-            
-            print("\nDifficulties:", ", ".join(DIFFICULTIES))
-            
-            while True:
-                difficulty = input("Choose difficulty: ").strip().lower()
-            
-                if difficulty in DIFFICULTIES:
-                    self.difficulty = difficulty
-                    break
-            
-                print("Invalid difficulty. Choose easy, medium, or hard.")
-            
+
             self.category = raw
-            
+            print("\nDifficulties:", ", ".join(DIFFICULTIES))
+
+            while True:
+                difficulty = input("Choose difficulty or q to quit: ").strip().lower()
+
+                if difficulty == "q":
+                    self.print_session_stats()
+                    return
+                if difficulty not in DIFFICULTIES:
+                    print("Invalid difficulty. Choose easy, medium, or hard.")
+                    continue
+
+                self.difficulty = difficulty
+                break
+
             if not self.play_round():
                 self.print_session_stats()
                 return
@@ -128,3 +135,6 @@ class HangmanGame:
                 self.print_session_stats()
                 return
 
+
+if __name__ == "__main__":
+    HangmanGame().run()
