@@ -27,9 +27,9 @@
 
 | Tool | Before | After |
 |---|---|---|
-| Pylint | 3.95/10 | <e.g. 10.00/10> |
-| Bandit | 3 findings (1 Medium, 2 Low) | <e.g. No issues identified> |
-| Flake8 | 5 violations | <e.g. 0 violations> |
+| Pylint | 3.95/10 | < 9.71/10> |
+| Bandit | 3 findings (1 Medium, 2 Low) | < No issues identified> |
+| Flake8 | 5 violations | < 0 violations> |
 
 ## Commits
 - Fix Bandit security issues: <hash>
