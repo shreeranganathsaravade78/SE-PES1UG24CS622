@@ -64,3 +64,6 @@ def test_medical_eligibility():
 
 def test_detained():
     assert exam_eligibility(60, True, False) == "detained"
+    
+def test_letter_grade_zero_marks():
+    assert letter_grade(0) == "F"
