@@ -5,7 +5,7 @@ from student_grades import letter_grade, final_marks, exam_eligibility
 
 # Letter grade branches and boundaries
 @pytest.mark.parametrize("marks, expected", [
-    (0, "F"),
+    (0, "z"),
     (39, "F"),
     (40, "E"),
     (49, "E"),
